@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Karuta</title>
+    <META charset="UTF-8">
+    <style>
+        td.card{
+            width: 100px;
+            height: 140px;
+            background-color: white;
+        }
+        td.q1{
+            background-image:url("q1.png");
+            background-size:100px 140px;
+        }
+        td.q2{
+            background-image:url("q2.png");
+            background-size:100px 140px;
+        }
+        td.q3{
+            background-image:url("q3.png");
+            background-size:100px 140px;
+        }
+        td.q4{
+            background-image:url("q4.png");
+            background-size:100px 140px;
+        }
+        td.q5{
+            background-image:url("q5.png");
+            background-size:100px 140px;
+        }
+        td.ch1{
+            background-image:url("card1.png");
+            background-size:100px 140px;
+        }
+        td.ch2{
+            background-image:url("card2.png");
+            background-size:100px 140px;
+        }
+        td.ch3{
+            background-image:url("card3.png");
+            background-size:100px 140px;
+        }
+        td.ch4{
+            background-image:url("card4.png");
+            background-size:100px 140px;
+        }
+        td.ch5{
+            background-image:url("card5.png");
+            background-size:100px 140px;
+        }
+        td.ans1{
+            background-image:url("ans1.png");
+            background-size:100px 140px;
+        }
+        td.ans2{
+            background-image:url("ans2.png");
+            background-size:100px 140px;
+        }
+        td.ans3{
+            background-image:url("ans3.png");
+            background-size:100px 140px;
+        }
+        td.ans4{
+            background-image:url("ans4.png");
+            background-size:100px 140px;
+        }
+        td.ans5{
+            background-image:url("ans5.png");
+            background-size:100px 140px;
+        }
+    </style>
+    <script>
+        "use strict";
+        Array.prototype.shuffle=function(){
+            var i = this.length;
+            while(i){
+                var j = Math.floor(Math.random() * i);
+                var t = this[--i];
+                this[i]=this[j];
+                this[j]=t;
+            }
+            return this;
+        }
+
+        var timer = NaN, score = 0, flipTimer, prevCard, startTime;
+        var question = [];
+
+        function init(){
+            var table = document.getElementById("table");
+            var cards = [];
+            for(var i=1;i<=5;i++){
+                cards.push(i);
+                question.push(i);
+            }
+            cards.shuffle();
+            question.shuffle();
+
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            td.className = "card q"+question[0];
+            td.id = "question";
+            td.number = question[0];
+            tr.appendChild(td);
+            table.appendChild(tr);
+
+            var tr = document.createElement("tr");
+                for(var i=0;i<5;i++){
+                    var td = document.createElement("td");
+                    td.className = "card ch"+cards[i];
+                    td.number = cards[i];
+                    td.onclick = clicked;
+                    tr.appendChild(td);
+                }
+            table.appendChild(tr);
+            var tr = document.createElement("tr");
+                for(var i=0;i<5;i++){
+                    var td = document.createElement("td");
+                    td.className = "card";
+                    td.id = "answer"+i;
+                    tr.appendChild(td);
+                }
+            table.appendChild(tr);
+            prevCard=question[0];
+            startTime = new Date();
+            timer = setInterval(tick,1000);
+        }
+
+        function tick(){
+            var now = new Date();
+            var elapsed = Math.floor((now.getTime() - startTime.getTime())/1000);
+            document.getElementById("time").textContent = elapsed;
+        }
+
+        function clicked(e){
+            var src = e.srcElement;
+            var num = src.number;
+            if(prevCard==num){
+                next(src);
+                if(score==5){clearInterval(timer)}
+                clearTimeout(flipTimer);
+            }else{
+                flipTimer=setTimeout(function(){
+                    flipTimer = NaN;
+                },1000);
+            }
+        }
+        function next(src){
+            var ans = document.getElementById("answer"+score);
+            var next = document.getElementById("question");
+            ans.className = "card ans"+prevCard;
+            score++;
+            if(score<5){
+            prevCard = question[score];
+            next.className = "card q"+question[score];
+            src.className ="card";
+            }else{
+                src.className ="card";
+                next.className ="card";
+            }
+        }
+    </script>
+</head>
+<body onload="init()">
+    <h2>漢字の読み方の描かれたカードをクリックしよう</h2>
+    <h2>その漢字の絵を見ることができます</h2>
+    <table id="table"></table>
+    <h2>
+        経過時間：<span id="time">0</span>秒
+    </h2>
+</body>
+</html>
